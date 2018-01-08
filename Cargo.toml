@@ -1,0 +1,11 @@
+[package]
+name = "piston_2048"
+version = "0.1.0"
+authors = ["juventietis <mantasmarkeviciuslt@gmail.com>"]
+
+[dependencies]
+piston = "*"
+pistoncore-glutin_window = "*"
+piston2d-graphics = "*"
+piston2d-opengl_graphics = "*"
+rand = "*"
