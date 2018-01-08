@@ -3,8 +3,11 @@
 use graphics::types::Color;
 use graphics::{Context, Graphics};
 use graphics::character::CharacterCache;
+use graphics::Colored;
+use graphics::Text;
 
 use GameboardController;
+use Cell;
 
 /// Stores gameboard view settings.
 pub struct GameboardViewSettings {
@@ -40,7 +43,7 @@ impl GameboardViewSettings {
         GameboardViewSettings {
             position: [10.0; 2],
             size: 400.0,
-            background_color: [0.8, 0.8, 1.0, 1.0],
+            background_color: [1.0, 0.89, 0.8, 1.0],
             border_color: [0.0, 0.0, 0.2, 1.0],
             board_edge_color: [0.0, 0.0, 0.2, 1.0],
             section_edge_color: [0.0, 0.0, 0.2, 1.0],
@@ -66,6 +69,11 @@ impl GameboardView {
         GameboardView {
             settings: settings,
         }
+    }
+
+    fn get_cell_color(&self, cell: Cell) -> Color {
+        let color: Color = [1.0, 0.8, 0.6, 1.0];
+        color
     }
 
     /// Draw gameboard.
@@ -114,27 +122,38 @@ impl GameboardView {
 		let text_image = Image::new_color(settings.text_color);
 		for j in 0..4 {
 			for i in 0..4 {
-                let cell_rect = [
-                    settings.position[0] + i as f64 * cell_size + 10.0,
-                    settings.position[1] + j as f64 * cell_size + 10.0,
-                    cell_size - 20.0,
-                    cell_size - 20.0 ,
-                ];
-                Rectangle::new(settings.cell_color).draw(cell_rect, &c.draw_state, c.transform, g);
-				if let Some(ch) = controller.gameboard.cell_val([i, j]) {
-					let pos = [
-						settings.position[0] + i as f64 * cell_size + 40.0,
-						settings.position[1] + j as f64 * cell_size + 60.0
-					];
-					if let Ok(character) = glyphs.character(50, ch) {
-						let ch_x = pos[0] + character.left();
-						let ch_y = pos[1] - character.top();
-						text_image.draw(character.texture,
-										&c.draw_state,
-										c.transform.trans(ch_x, ch_y),
-										g);
-					}
-				}
+                let cell = controller.gameboard.cell([i, j]);
+                match cell {
+                    Cell::Occupied(n) => {
+                        let cell_color = self.get_cell_color(cell);
+                        let cell_rect = [
+                            settings.position[0] + i as f64 * cell_size + 10.0,
+                            settings.position[1] + j as f64 * cell_size + 10.0,
+                            cell_size - 20.0,
+                            cell_size - 20.0 ,
+                        ];
+                        Rectangle::new(cell_color).draw(cell_rect, &c.draw_state, c.transform, g);
+                        let cell_val_str: String = n.to_string();
+                        let n_char = cell_val_str.chars().count();
+                        let pad_x = match n_char {
+                            1 => 30.0,
+                            2 => 5.0,
+                            3 => 2.5,
+                            _ => 0.0,
+                        };
+                        let pos = [
+                            settings.position[0] + i as f64 * cell_size + 10.0 + pad_x,
+                            settings.position[1] + j as f64 * cell_size + 60.0
+                        ];
+                        Text::new_color(settings.text_color, 50).draw(&n.to_string(),
+                                                            glyphs,
+                                                            &c.draw_state,
+                                                            c.transform.trans(pos[0], pos[1]),
+                                                            g);
+
+                    }
+                    Cell::Empty => (),
+                }
 			}
 		}
     }

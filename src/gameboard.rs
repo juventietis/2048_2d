@@ -48,6 +48,11 @@ impl Gameboard {
 		})
 	}
 
+	/// Gets the character at cell location.
+	pub fn cell(&self, ind: [usize; 2]) -> Cell {
+		self.cells[ind[1]][ind[0]]
+	}
+
 	/// Set cell value.
 	pub fn set(&mut self, ind: [usize; 2], val: Cell) {
 		self.cells[ind[1]][ind[0]] = val;

@@ -1,6 +1,5 @@
-#![deny(missing_docs)]
-
 //! A 2048 game.
+#[deny(missing_docs)]
 extern crate piston;
 extern crate glutin_window;
 extern crate graphics;
@@ -14,6 +13,7 @@ use opengl_graphics::{OpenGL, GlGraphics, Filter, GlyphCache, TextureSettings};
 use piston::input::RenderEvent;
 
 pub use gameboard::Gameboard;
+pub use gameboard::Cell;
 pub use gameboard_controller::GameboardController;
 pub use gameboard_view::{GameboardView, GameboardViewSettings};
 
