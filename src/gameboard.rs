@@ -5,6 +5,9 @@ use rand::{Rng, thread_rng};
 pub const SIZE: usize = 4;
 const NUMBER_OF_FILLED_CELL_AT_START: usize = 4;
 const STARTING_CELL_NUMBER: usize = 2;
+const CHANCE_OF_ADDING_CELLS: usize = 4;
+const MAX_NUMBER_OF_NEW_CELLS_TO_ADD: usize = 4;
+const NUMBER_OF_CELLS: usize = SIZE*SIZE;
 
 /// Stores game board information.
 pub struct Gameboard {
@@ -60,6 +63,44 @@ impl Gameboard {
         }
     }
 
+    pub fn maybe_add_new_cells(&mut self){
+        let chance = thread_rng().gen_range(0, CHANCE_OF_ADDING_CELLS);
+        if chance == 0 {
+            let current_num_of_filled = self.number_of_filled_cels();
+            let num_of_free = NUMBER_OF_CELLS - current_num_of_filled;
+            let max_cells_to_add = thread_rng().gen_range(2, MAX_NUMBER_OF_NEW_CELLS_TO_ADD);
+            if num_of_free != 0{
+                let cells_to_add = ::std::cmp::min(num_of_free, max_cells_to_add);
+                for _ in 0..cells_to_add{
+                    loop{
+                        let cell_x: usize = thread_rng().gen_range(0, SIZE);
+                        let cell_y: usize = thread_rng().gen_range(0, SIZE);
+                        match self.cell([cell_x, cell_y]) {
+                            Cell::Empty => {
+                                self.set([cell_x, cell_y], Cell::Occupied(STARTING_CELL_NUMBER));
+                                break;
+                            }
+                            Cell::Occupied(_) => ()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fn number_of_filled_cels(&self) -> usize {
+        let mut count = 0;
+        for i in 0..4{
+            for j in 0..4{
+                match self.cell([i,j]) {
+                    Cell::Occupied(_) => count += 1,
+                    Cell::Empty => (),
+                }
+            }
+        }
+        count
+    }
+
 	/// Gets the character at cell location.
 	pub fn cell_val(&self, ind: [usize; 2]) -> Option<char> {
 		Some(match self.cells[ind[1]][ind[0]] {
@@ -71,10 +112,13 @@ impl Gameboard {
 
     pub fn handle_move(&mut self, move_direction: MoveDirection){
         let moved = self.move_command(move_direction);
+        if moved{
+            self.maybe_add_new_cells();
+        }
     }
 
     pub fn move_command(&mut self, move_direction: MoveDirection) -> bool{
-        let mut modifications: Vec<(Position, Position, Cell)> = vec![];
+        let mut executed_move = false;
         let mut iter_order_x: Vec<usize> = (0..4).collect();
         let mut iter_order_y: Vec<usize> = (0..4).collect();
         match move_direction {
@@ -105,8 +149,8 @@ impl Gameboard {
                                                     next_position = Position::new(x, next_y);
                                                     new_cell = Cell::Occupied(n*2);
                                                     moved = true;
-                                                    break;
                                                 }
+                                                break;
                                             }
                                         }
                                         if next_y == 0{
@@ -118,6 +162,7 @@ impl Gameboard {
                                         println!("Move happened");
                                         self.set([next_position.x, next_position.y], new_cell);
                                         self.set([x, y], Cell::Empty);
+                                        executed_move = true;
                                     }
                                 }
                             }
@@ -150,6 +195,7 @@ impl Gameboard {
                                         println!("Move happened");
                                         self.set([next_position.x, next_position.y], new_cell);
                                         self.set([x, y], Cell::Empty);
+                                        executed_move = true;
                                     }
 
                                 }
@@ -170,8 +216,8 @@ impl Gameboard {
                                                     next_position = Position::new(x, next_y);
                                                     new_cell = Cell::Occupied(n*2);
                                                     moved = true;
-                                                    break;
                                                 }
+                                                break;
                                             }
                                         }
                                         if next_y == 3{
@@ -183,6 +229,7 @@ impl Gameboard {
                                         println!("Move happened");
                                         self.set([next_position.x, next_position.y], new_cell);
                                         self.set([x, y], Cell::Empty);
+                                        executed_move = true;
                                     }
                                 }
                             }
@@ -215,18 +262,18 @@ impl Gameboard {
                                         println!("Move happened");
                                         self.set([next_position.x, next_position.y], new_cell);
                                         self.set([x, y], Cell::Empty);
+                                        executed_move = true;
                                     }
 
                                 }
                             }
-                            _ => (),
                         }
                     }
                     Cell::Empty => (),
                 }
             }
         }
-        true
+        executed_move
     }
 
 	/// Gets the character at cell location.
