@@ -136,8 +136,8 @@ impl GameboardView {
                         let cell_val_str: String = n.to_string();
                         let n_char = cell_val_str.chars().count();
                         let pad_x = match n_char {
-                            1 => 30.0,
-                            2 => 5.0,
+                            1 => 25.0,
+                            2 => 15.0,
                             3 => 2.5,
                             _ => 0.0,
                         };
