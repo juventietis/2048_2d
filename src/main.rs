@@ -13,7 +13,7 @@ use opengl_graphics::{OpenGL, GlGraphics, Filter, GlyphCache, TextureSettings};
 use piston::input::RenderEvent;
 
 pub use gameboard::Gameboard;
-pub use gameboard::Cell;
+pub use gameboard::{Cell, MoveDirection, SIZE};
 pub use gameboard_controller::GameboardController;
 pub use gameboard_view::{GameboardView, GameboardViewSettings};
 
@@ -44,6 +44,7 @@ let opengl = OpenGL::V3_2;
 		.expect("Could not load font");
 
 	while let Some(e) = events.next(&mut window) {
+        gameboard_controller.event(&e);
 		if let Some(args) = e.render_args() {
 			gl.draw(args.viewport(), |c, g| {
 				use::graphics::{clear};
