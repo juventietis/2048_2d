@@ -4,7 +4,7 @@ use rand::{Rng, thread_rng};
 /// Size of game board.
 pub const SIZE: usize = 4;
 const NUMBER_OF_FILLED_CELL_AT_START: usize = 4;
-const STARTING_CELL_NUMBER: usize = 2;
+const STARTING_CELL_NUMBER: usize = 128;
 const CHANCE_OF_ADDING_CELLS: usize = 4;
 const MAX_NUMBER_OF_NEW_CELLS_TO_ADD: usize = 4;
 const NUMBER_OF_CELLS: usize = SIZE*SIZE;

@@ -73,7 +73,20 @@ impl GameboardView {
 
     fn get_cell_color(&self, cell: Cell) -> Color {
         let color: Color = [1.0, 0.8, 0.6, 1.0];
-        color
+        match cell {
+            Cell::Occupied(2) => [1.0, 0.8, 0.6, 1.0],
+            Cell::Occupied(4) => [1.0, 0.6, 0.207, 1.0],
+            Cell::Occupied(8) => [1.0, 0.5, 0.0, 1.0],
+            Cell::Occupied(16) => [1.0, 0.4, 0.0, 1.0],
+            Cell::Occupied(32) => [1.0, 0.3, 0.0, 1.0],
+            Cell::Occupied(64) => [1.0, 0.2, 0.0, 1.0],
+            Cell::Occupied(128) => [0.8, 0.2, 0.2, 1.0],
+            Cell::Occupied(256) => [1.0, 1.0, 0.6, 1.0],
+            Cell::Occupied(512) => [1.0, 0.7560, 0.4, 1.0],
+            Cell::Occupied(1024) => [1.0, 0.6, 0.0, 1.0],
+            Cell::Occupied(2048) => [0.84, 0.48, 0.149, 1.0],
+            _ => color,
+        }
     }
 
     /// Draw gameboard.
@@ -141,11 +154,16 @@ impl GameboardView {
                             3 => 2.5,
                             _ => 0.0,
                         };
+                        let font_size = if n_char <= 3{
+                            50
+                        } else {
+                            40
+                        };
                         let pos = [
                             settings.position[0] + i as f64 * cell_size + 10.0 + pad_x,
                             settings.position[1] + j as f64 * cell_size + 60.0
                         ];
-                        Text::new_color(settings.text_color, 50).draw(&n.to_string(),
+                        Text::new_color(settings.text_color, font_size).draw(&n.to_string(),
                                                             glyphs,
                                                             &c.draw_state,
                                                             c.transform.trans(pos[0], pos[1]),
