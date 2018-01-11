@@ -128,7 +128,7 @@ impl GameboardView {
         }
 
         // Draw board edge.
-        Rectangle::new_border(settings.board_edge_color, settings.board_edge_radius)
+        Rectangle::new_round_border(settings.board_edge_color, 5.0, settings.board_edge_radius)
             .draw(board_rect, &c.draw_state, c.transform, g);
 
 		// Draw characters.
@@ -145,7 +145,7 @@ impl GameboardView {
                             cell_size - 20.0,
                             cell_size - 20.0 ,
                         ];
-                        Rectangle::new(cell_color).draw(cell_rect, &c.draw_state, c.transform, g);
+                        Rectangle::new_round(cell_color, 5.0).draw(cell_rect, &c.draw_state, c.transform, g);
                         let cell_val_str: String = n.to_string();
                         let n_char = cell_val_str.chars().count();
                         let pad_x = match n_char {
