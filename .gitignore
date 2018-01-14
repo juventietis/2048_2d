@@ -11,6 +11,7 @@ Cargo.lock
 **/*.rs.rustfmt
 **/*.swp
 **/*.swo
+**/*.swn
 
 save_game.json
 
