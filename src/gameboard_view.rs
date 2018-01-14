@@ -3,7 +3,6 @@
 use graphics::types::Color;
 use graphics::{Context, Graphics};
 use graphics::character::CharacterCache;
-use graphics::Colored;
 use graphics::Text;
 
 use GameboardController;
@@ -103,12 +102,9 @@ impl GameboardView {
             settings.size, settings.size,
         ];
 
-		      // Draw board background.
+          // Draw board background.
         Rectangle::new(settings.background_color)
             .draw(board_rect, &c.draw_state, c.transform, g);
-
-		      // Draw cell borders.
-        let cell_edge = Line::new(settings.cell_edge_color, settings.cell_edge_radius);
 
         // Draw section borders.
         let section_edge = Line::new(settings.section_edge_color, settings.section_edge_radius);
@@ -132,7 +128,6 @@ impl GameboardView {
             .draw(board_rect, &c.draw_state, c.transform, g);
 
 		// Draw characters.
-		let text_image = Image::new_color(settings.text_color);
 		for j in 0..4 {
 			for i in 0..4 {
                 let cell = controller.gameboard.cell([i, j]);

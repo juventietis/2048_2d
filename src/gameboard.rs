@@ -4,7 +4,7 @@ use rand::{Rng, thread_rng};
 /// Size of game board.
 pub const SIZE: usize = 4;
 const NUMBER_OF_FILLED_CELL_AT_START: usize = 4;
-const STARTING_CELL_NUMBER: usize = 128;
+const STARTING_CELL_NUMBER: usize = 2;
 const CHANCE_OF_ADDING_CELLS: usize = 4;
 const MAX_NUMBER_OF_NEW_CELLS_TO_ADD: usize = 4;
 const NUMBER_OF_CELLS: usize = SIZE*SIZE;
@@ -128,20 +128,17 @@ impl Gameboard {
         };
         for x in iter_order_x{
             for y in iter_order_y.clone(){
-                println!("X: {}, Y: {}", x, y);
                 let cell = self.cell([x, y]);
                 match cell {
                     Cell::Occupied(n) => {
                         match move_direction {
                             MoveDirection::Up => {
                                 if y != 0{
-                                    print!("Moved up");
                                     let mut next_position: Position = Position::new(x,y);
                                     let mut new_cell = cell;
                                     let mut moved = false;
                                     let mut next_y = y - 1;
                                     loop{
-                                        println!("Next_y {}", next_y);
                                         match self.cell([x, next_y]) {
                                             Cell::Empty => {next_position = Position::new(x, next_y); moved = true;}
                                             Cell::Occupied(m) => {
@@ -159,7 +156,6 @@ impl Gameboard {
                                         next_y -= 1;
                                     };
                                     if moved{
-                                        println!("Move happened");
                                         self.set([next_position.x, next_position.y], new_cell);
                                         self.set([x, y], Cell::Empty);
                                         executed_move = true;
@@ -168,13 +164,11 @@ impl Gameboard {
                             }
                             MoveDirection::Right => {
                                 if x != 3{
-                                    print!("Moved up");
                                     let mut next_position: Position = Position::new(x,y);
                                     let mut new_cell = cell;
                                     let mut moved = false;
                                     let mut next_x = x + 1;
                                     loop{
-                                        println!("Next_x {}", next_x);
                                         match self.cell([next_x, y]) {
                                             Cell::Empty => {next_position = Position::new(next_x, y); moved = true;}
                                             Cell::Occupied(m) => {
@@ -192,7 +186,6 @@ impl Gameboard {
                                         next_x += 1;
                                     };
                                     if moved{
-                                        println!("Move happened");
                                         self.set([next_position.x, next_position.y], new_cell);
                                         self.set([x, y], Cell::Empty);
                                         executed_move = true;
@@ -202,13 +195,11 @@ impl Gameboard {
                             }
                             MoveDirection::Down => {
                                 if y != 3{
-                                    print!("Moved down");
                                     let mut next_position: Position = Position::new(x,y);
                                     let mut new_cell = cell;
                                     let mut moved = false;
                                     let mut next_y = y + 1;
                                     loop{
-                                        println!("Next_y {}", next_y);
                                         match self.cell([x, next_y]) {
                                             Cell::Empty => {next_position = Position::new(x, next_y); moved = true;}
                                             Cell::Occupied(m) => {
@@ -226,7 +217,6 @@ impl Gameboard {
                                         next_y += 1;
                                     };
                                     if moved{
-                                        println!("Move happened");
                                         self.set([next_position.x, next_position.y], new_cell);
                                         self.set([x, y], Cell::Empty);
                                         executed_move = true;
@@ -235,13 +225,11 @@ impl Gameboard {
                             }
                             MoveDirection::Left => {
                                 if x != 0{
-                                    print!("Moved left");
                                     let mut next_position: Position = Position::new(x,y);
                                     let mut new_cell = cell;
                                     let mut moved = false;
                                     let mut next_x = x - 1;
                                     loop{
-                                        println!("Next_x {}", next_x);
                                         match self.cell([next_x, y]) {
                                             Cell::Empty => {next_position = Position::new(next_x, y); moved = true;}
                                             Cell::Occupied(m) => {

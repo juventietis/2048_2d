@@ -2,7 +2,7 @@
 
 use piston::input::GenericEvent;
 
-use {Gameboard, MoveDirection, SIZE};
+use {Gameboard, MoveDirection};
 
 /// Handles events for Sudoku game.
 pub struct GameboardController {
@@ -28,7 +28,6 @@ impl GameboardController {
         use piston::input::{Button, Key};
 
         if let Some(Button::Keyboard(key)) = e.press_args(){
-            println!("Key pressed!");
             match key {
                 Key::Up | Key::W => self.move_command(MoveDirection::Up),
                 Key::Right | Key::D => self.move_command(MoveDirection::Right),
