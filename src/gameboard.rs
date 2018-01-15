@@ -5,8 +5,7 @@ use rand::{Rng, thread_rng};
 pub const SIZE: usize = 4;
 const NUMBER_OF_FILLED_CELL_AT_START: usize = 4;
 const STARTING_CELL_NUMBER: usize = 2;
-const CHANCE_OF_ADDING_CELLS: usize = 4;
-const MAX_NUMBER_OF_NEW_CELLS_TO_ADD: usize = 4;
+const MAX_NUMBER_OF_NEW_CELLS_TO_ADD: usize = 2;
 const NUMBER_OF_CELLS: usize = SIZE * SIZE;
 
 type Cells = [[Cell; SIZE]; SIZE];
@@ -74,24 +73,21 @@ impl Gameboard {
     }
 
     pub fn maybe_add_new_cells(&mut self){
-        let chance = thread_rng().gen_range(0, CHANCE_OF_ADDING_CELLS);
-        if chance == 0 {
-            let current_num_of_filled = self.number_of_filled_cels();
-            let num_of_free = NUMBER_OF_CELLS - current_num_of_filled;
-            let max_cells_to_add = thread_rng().gen_range(2, MAX_NUMBER_OF_NEW_CELLS_TO_ADD);
-            if num_of_free != 0{
-                let cells_to_add = ::std::cmp::min(num_of_free, max_cells_to_add);
-                for _ in 0..cells_to_add{
-                    loop{
-                        let cell_x: usize = thread_rng().gen_range(0, SIZE);
-                        let cell_y: usize = thread_rng().gen_range(0, SIZE);
-                        match self.cell([cell_x, cell_y]) {
-                            Cell::Empty => {
-                                self.set([cell_x, cell_y], Cell::Occupied(STARTING_CELL_NUMBER));
-                                break;
-                            }
-                            Cell::Occupied(_) => ()
+        let current_num_of_filled = self.number_of_filled_cels();
+        let num_of_free = NUMBER_OF_CELLS - current_num_of_filled;
+        let max_cells_to_add = thread_rng().gen_range(1, MAX_NUMBER_OF_NEW_CELLS_TO_ADD);
+        if num_of_free != 0{
+            let cells_to_add = ::std::cmp::min(num_of_free, max_cells_to_add);
+            for _ in 0..cells_to_add{
+                loop{
+                    let cell_x: usize = thread_rng().gen_range(0, SIZE);
+                    let cell_y: usize = thread_rng().gen_range(0, SIZE);
+                    match self.cell([cell_x, cell_y]) {
+                        Cell::Empty => {
+                            self.set([cell_x, cell_y], Cell::Occupied(STARTING_CELL_NUMBER));
+                            break;
                         }
+                        Cell::Occupied(_) => ()
                     }
                 }
             }
