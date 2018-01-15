@@ -4,6 +4,7 @@ use graphics::types::Color;
 use graphics::{Context, Graphics};
 use graphics::character::CharacterCache;
 use graphics::Text;
+use graphics::{Line, Rectangle, Transformed};
 
 use GameboardController;
 use Cell;
@@ -89,13 +90,37 @@ impl GameboardView {
         }
     }
 
+    fn draw_dialog<G: Graphics, C>(&self, 
+			glyphs: &mut C, 
+            text: &str,
+			c: &Context,
+			g: &mut G) where C: CharacterCache<Texture = G::Texture> {
+        let ref settings = self.settings;
+        let notif_rect = [
+            settings.position[0] + 40.0, settings.position[1] + 40.0,
+            settings.size - 80.0, settings.size - 80.0,
+        ];
+        // Draw board background.
+        Rectangle::new_round(settings.cell_color, 10.0)
+            .draw(notif_rect, &c.draw_state, c.transform, g);
+        let text_pos = [
+            settings.position[0] + 80.0,
+            settings.position[1] + 160.0 + 60.0
+        ];
+        Text::new_color(settings.text_color, 60).draw(text,
+                                            glyphs,
+                                            &c.draw_state,
+                                            c.transform.trans(text_pos[0], text_pos[1]),
+                                            g);
+
+    }
+
     /// Draw gameboard.
     pub fn draw<G: Graphics, C>(&self, 
 			controller: &GameboardController,
 			glyphs: &mut C, 
 			c: &Context,
 			g: &mut G) where C: CharacterCache<Texture = G::Texture> {
-        use graphics::{Line, Rectangle, Transformed};
 
         let ref settings = self.settings;
         let board_rect = [
@@ -172,22 +197,10 @@ impl GameboardView {
 
             match controller.game_state{
                 GameState::Lost => {
-                    let notif_rect = [
-                        settings.position[0] + 40.0, settings.position[1] + 40.0,
-                        settings.size - 80.0, settings.size - 80.0,
-                    ];
-                    // Draw board background.
-                    Rectangle::new_round(settings.cell_color, 10.0)
-                        .draw(notif_rect, &c.draw_state, c.transform, g);
-                    let text_pos = [
-                        settings.position[0] + 80.0,
-                        settings.position[1] + 160.0 + 60.0
-                    ];
-                    Text::new_color(settings.text_color, 60).draw("You Lost!",
-                                                        glyphs,
-                                                        &c.draw_state,
-                                                        c.transform.trans(text_pos[0], text_pos[1]),
-                                                        g);
+                    self.draw_dialog(glyphs, "You lost!", &c, g);
+                }
+                GameState::Won => {
+                    self.draw_dialog(glyphs, "You won!", &c, g);
                 }
                 _ => (),
             }

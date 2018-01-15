@@ -122,14 +122,21 @@ impl Gameboard {
         return can_move;
     }
 
-	/// Gets the character at cell location.
-	pub fn cell_val(&self, ind: [usize; 2]) -> Option<char> {
-		Some(match self.cells[ind[1]][ind[0]] {
-		    Cell::Occupied(2) => '2',
-            Cell::Occupied(_) => ' ',
-		    Cell::Empty => ' ',
-		})
-	}
+    fn has_won(&self) -> bool {
+        let mut has_won = false;
+        for i in 1..4 {
+            for j in 1..4{
+                match self.cells[i][j]{
+                    Cell::Occupied(2048) => {
+                        has_won = true;
+                        break;
+                    }
+                    _ => (),
+                }
+            }
+        }
+        return has_won;
+    }
 
     pub fn handle_move(&mut self, move_direction: MoveDirection) -> GameState{
         let board = self.cells.clone();
@@ -142,6 +149,10 @@ impl Gameboard {
         if !can_still_move{
             println!("You lost!");
             return GameState::Lost;
+        }
+        if self.has_won(){
+            println!("You won!");
+            return GameState::Won;
         }
         return GameState::Playing;
     }
