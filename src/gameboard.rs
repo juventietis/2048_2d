@@ -102,6 +102,19 @@ impl Gameboard {
         count
     }
 
+    fn can_move(&self) -> bool {
+        let mut can_move = false;
+        for movement in [MoveDirection::Up, MoveDirection::Right, MoveDirection::Down, MoveDirection::Left].iter(){
+            let board = self.cells.clone();
+            let (moved, _) = self.move_command(*movement, board);
+            if moved{
+                 can_move = true;
+                 break;
+            }
+        }
+        return can_move;
+    }
+
 	/// Gets the character at cell location.
 	pub fn cell_val(&self, ind: [usize; 2]) -> Option<char> {
 		Some(match self.cells[ind[1]][ind[0]] {
@@ -118,9 +131,13 @@ impl Gameboard {
         if moved{
             self.maybe_add_new_cells();
         }
+        let can_still_move = self.can_move();
+        if !can_still_move{
+            println!("You lost!");
+        }
     }
 
-    pub fn move_command(&mut self, move_direction: MoveDirection, mut cells: Cells) -> (bool, Cells) {
+    pub fn move_command(&self, move_direction: MoveDirection, mut cells: Cells) -> (bool, Cells) {
         let mut executed_move = false;
         let mut iter_order_x: Vec<usize> = (0..4).collect();
         let mut iter_order_y: Vec<usize> = (0..4).collect();
