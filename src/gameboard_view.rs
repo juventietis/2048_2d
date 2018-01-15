@@ -7,6 +7,7 @@ use graphics::Text;
 
 use GameboardController;
 use Cell;
+use GameState;
 
 /// Stores gameboard view settings.
 pub struct GameboardViewSettings {
@@ -47,7 +48,7 @@ impl GameboardViewSettings {
             board_edge_color: [0.0, 0.0, 0.2, 1.0],
             section_edge_color: [0.0, 0.0, 0.2, 1.0],
             cell_edge_color: [0.0, 0.0, 0.2, 1.0],
-            cell_color: [1.0, 1.0, 1.0, 1.0],
+            cell_color: [1.0, 1.0, 1.0, 0.70],
             board_edge_radius: 3.0,
             section_edge_radius: 2.0,
             cell_edge_radius: 1.0,
@@ -102,7 +103,7 @@ impl GameboardView {
             settings.size, settings.size,
         ];
 
-          // Draw board background.
+        // Draw board background.
         Rectangle::new(settings.background_color)
             .draw(board_rect, &c.draw_state, c.transform, g);
 
@@ -168,6 +169,28 @@ impl GameboardView {
                     Cell::Empty => (),
                 }
 			}
+
+            match controller.game_state{
+                GameState::Lost => {
+                    let notif_rect = [
+                        settings.position[0] + 40.0, settings.position[1] + 40.0,
+                        settings.size - 80.0, settings.size - 80.0,
+                    ];
+                    // Draw board background.
+                    Rectangle::new_round(settings.cell_color, 10.0)
+                        .draw(notif_rect, &c.draw_state, c.transform, g);
+                    let text_pos = [
+                        settings.position[0] + 80.0,
+                        settings.position[1] + 160.0 + 60.0
+                    ];
+                    Text::new_color(settings.text_color, 60).draw("You Lost!",
+                                                        glyphs,
+                                                        &c.draw_state,
+                                                        c.transform.trans(text_pos[0], text_pos[1]),
+                                                        g);
+                }
+                _ => (),
+            }
 		}
     }
 }

@@ -31,6 +31,13 @@ pub enum MoveDirection {
     Left,
 }
 
+#[derive(Clone, Copy)]
+pub enum GameState {
+    Won,
+    Lost,
+    Playing,
+}
+
 pub struct Position {
     x: usize,
     y: usize,
@@ -124,7 +131,7 @@ impl Gameboard {
 		})
 	}
 
-    pub fn handle_move(&mut self, move_direction: MoveDirection){
+    pub fn handle_move(&mut self, move_direction: MoveDirection) -> GameState{
         let board = self.cells.clone();
         let (moved, board_after_move) = self.move_command(move_direction, board);
         self.cells = board_after_move;
@@ -134,7 +141,9 @@ impl Gameboard {
         let can_still_move = self.can_move();
         if !can_still_move{
             println!("You lost!");
+            return GameState::Lost;
         }
+        return GameState::Playing;
     }
 
     pub fn move_command(&self, move_direction: MoveDirection, mut cells: Cells) -> (bool, Cells) {

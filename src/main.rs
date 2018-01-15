@@ -13,7 +13,7 @@ use opengl_graphics::{OpenGL, GlGraphics, Filter, GlyphCache, TextureSettings};
 use piston::input::RenderEvent;
 
 pub use gameboard::Gameboard;
-pub use gameboard::{Cell, MoveDirection, SIZE};
+pub use gameboard::{Cell, MoveDirection, SIZE, GameState};
 pub use gameboard_controller::GameboardController;
 pub use gameboard_view::{GameboardView, GameboardViewSettings};
 

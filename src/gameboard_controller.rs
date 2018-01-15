@@ -2,12 +2,13 @@
 
 use piston::input::GenericEvent;
 
-use {Gameboard, MoveDirection};
+use {Gameboard, MoveDirection, GameState};
 
 /// Handles events for Sudoku game.
 pub struct GameboardController {
     /// Stores the gameboard state.
     pub gameboard: Gameboard,
+    pub game_state: GameState,
 
 }
 
@@ -16,11 +17,18 @@ impl GameboardController {
     pub fn new(gameboard: Gameboard) -> GameboardController {
         GameboardController {
             gameboard: gameboard,
+            game_state: GameState::Playing,
         }
     }
 
     fn move_command(&mut self, move_direction: MoveDirection){
-        self.gameboard.handle_move(move_direction);
+        match self.game_state {
+            GameState::Playing => {
+                let new_game_state = self.gameboard.handle_move(move_direction);
+                self.game_state = new_game_state;
+            }
+            _ =>(),
+        }
     }
 
     /// Handles events.
