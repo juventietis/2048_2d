@@ -27,6 +27,9 @@ impl GameboardController {
                 let new_game_state = self.gameboard.handle_move(move_direction);
                 self.game_state = new_game_state;
             }
+            GameState::Won => {
+                self.game_state = GameState::Playing;
+            }
             _ =>(),
         }
     }

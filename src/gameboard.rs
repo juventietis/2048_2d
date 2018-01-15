@@ -15,6 +15,7 @@ type Cells = [[Cell; SIZE]; SIZE];
 pub struct Gameboard {
     /// Stores the content of the cells.
     pub cells: Cells,
+    pub has_already_won: bool,
 }
 
 #[derive(Clone, Copy)]
@@ -57,6 +58,7 @@ impl Gameboard {
         let board = [[Cell::Empty; SIZE]; SIZE];
         let mut gameboard = Gameboard {
             cells: board,
+            has_already_won: false,
         };
         gameboard.set_up_board();
         gameboard
@@ -124,8 +126,8 @@ impl Gameboard {
 
     fn has_won(&self) -> bool {
         let mut has_won = false;
-        for i in 1..4 {
-            for j in 1..4{
+        for i in 0..4 {
+            for j in 0..4{
                 match self.cells[i][j]{
                     Cell::Occupied(2048) => {
                         has_won = true;
@@ -150,8 +152,9 @@ impl Gameboard {
             println!("You lost!");
             return GameState::Lost;
         }
-        if self.has_won(){
+        if !self.has_already_won && self.has_won(){
             println!("You won!");
+            self.has_already_won = true;
             return GameState::Won;
         }
         return GameState::Playing;
