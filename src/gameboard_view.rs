@@ -94,7 +94,7 @@ impl GameboardView {
 			glyphs: &mut C, 
 			c: &Context,
 			g: &mut G) where C: CharacterCache<Texture = G::Texture> {
-        use graphics::{Line, Rectangle, Transformed, Image};
+        use graphics::{Line, Rectangle, Transformed};
 
         let ref settings = self.settings;
         let board_rect = [
@@ -128,15 +128,15 @@ impl GameboardView {
             .draw(board_rect, &c.draw_state, c.transform, g);
 
 		// Draw characters.
-		for j in 0..4 {
-			for i in 0..4 {
+		for i in 0..4 {
+			for j in 0..4 {
                 let cell = controller.gameboard.cell([i, j]);
                 match cell {
                     Cell::Occupied(n) => {
                         let cell_color = self.get_cell_color(cell);
                         let cell_rect = [
-                            settings.position[0] + i as f64 * cell_size + 10.0,
-                            settings.position[1] + j as f64 * cell_size + 10.0,
+                            settings.position[0] + j as f64 * cell_size + 10.0,
+                            settings.position[1] + i as f64 * cell_size + 10.0,
                             cell_size - 20.0,
                             cell_size - 20.0 ,
                         ];
@@ -155,8 +155,8 @@ impl GameboardView {
                             40
                         };
                         let pos = [
-                            settings.position[0] + i as f64 * cell_size + 10.0 + pad_x,
-                            settings.position[1] + j as f64 * cell_size + 60.0
+                            settings.position[0] + j as f64 * cell_size + 10.0 + pad_x,
+                            settings.position[1] + i as f64 * cell_size + 60.0
                         ];
                         Text::new_color(settings.text_color, font_size).draw(&n.to_string(),
                                                             glyphs,
