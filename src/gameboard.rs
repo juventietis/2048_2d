@@ -388,4 +388,38 @@ mod tests {
             }
         }
     }
+
+    #[test]
+    fn addition_works_for_other_numbers() {
+        let mut gameboard: Gameboard = Gameboard::new(false);
+        gameboard.cells[0][0] = Cell::Occupied(8);
+        gameboard.cells[0][3] = Cell::Occupied(8);
+        gameboard.handle_move(MoveDirection::Up);
+        let cell = gameboard.cells[0][0];
+        match cell{
+            Cell::Occupied(n) => {
+                assert_eq!(n, 16);
+            }
+            _ => {
+                panic!("Cell not found!");
+            }
+        }
+    }
+
+    #[test]
+    fn moving_to_other_directions_works() {
+        let mut gameboard: Gameboard = Gameboard::new(false);
+        gameboard.cells[0][0] = Cell::Occupied(8);
+        gameboard.cells[3][0] = Cell::Occupied(8);
+        gameboard.handle_move(MoveDirection::Left);
+        let cell = gameboard.cells[0][0];
+        match cell{
+            Cell::Occupied(n) => {
+                assert_eq!(n, 16);
+            }
+            _ => {
+                panic!("Cell not found!");
+            }
+        }
+    }
 }
