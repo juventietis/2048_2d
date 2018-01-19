@@ -53,13 +53,15 @@ impl Position{
 
 impl Gameboard {
     /// Creates a new game board.
-    pub fn new() -> Gameboard {
+    pub fn new(set_up_board: bool) -> Gameboard {
         let board = [[Cell::Empty; SIZE]; SIZE];
         let mut gameboard = Gameboard {
             cells: board,
             has_already_won: false,
         };
-        gameboard.set_up_board();
+        if set_up_board{
+            gameboard.set_up_board();
+        }
         gameboard
     }
 
@@ -311,4 +313,79 @@ impl Gameboard {
 	pub fn set(&mut self, ind: [usize; 2], val: Cell) {
 		self.cells[ind[1]][ind[0]] = val;
 	}
+}
+
+
+
+#[cfg(test)]
+mod tests {
+    use {Gameboard, Cell, MoveDirection};
+
+    #[test]
+    fn simple_addition() {
+        let mut gameboard: Gameboard = Gameboard::new(false);
+        gameboard.cells[0][0] = Cell::Occupied(2);
+        gameboard.cells[0][1] = Cell::Occupied(2);
+        gameboard.handle_move(MoveDirection::Up);
+        let cell = gameboard.cells[0][0];
+        match cell{
+            Cell::Occupied(n) => {
+                assert_eq!(n, 4);
+            }
+            _ => {
+                panic!("Cell not found!");
+            }
+        }
+    }
+
+    #[test]
+    fn numbers_dont_add_up() {
+        let mut gameboard: Gameboard = Gameboard::new(false);
+        gameboard.cells[0][0] = Cell::Occupied(2);
+        gameboard.cells[0][1] = Cell::Occupied(4);
+        gameboard.handle_move(MoveDirection::Up);
+        let cell = gameboard.cells[0][0];
+        match cell{
+            Cell::Occupied(n) => {
+                assert_eq!(n, 2);
+            }
+            _ => {
+                panic!("Cell not found!");
+            }
+        }
+    }
+
+    #[test]
+    fn empty_cell_doesnt_add_up() {
+        let mut gameboard: Gameboard = Gameboard::new(false);
+        gameboard.cells[0][0] = Cell::Occupied(2);
+        gameboard.cells[0][1] = Cell::Empty;
+        gameboard.handle_move(MoveDirection::Up);
+        let cell = gameboard.cells[0][0];
+        match cell{
+            Cell::Occupied(n) => {
+                assert_eq!(n, 2);
+            }
+            _ => {
+                panic!("Cell not found!");
+            }
+        }
+    }
+
+    #[test]
+    fn addition_works_across_multiple_steps() {
+        let mut gameboard: Gameboard = Gameboard::new(false);
+        gameboard.cells[0][0] = Cell::Occupied(2);
+        gameboard.cells[0][3] = Cell::Occupied(2);
+        gameboard.handle_move(MoveDirection::Up);
+        let cell = gameboard.cells[0][0];
+        match cell{
+            Cell::Occupied(n) => {
+                assert_eq!(n, 4);
+            }
+            _ => {
+                panic!("Cell not found!");
+            }
+        }
+    }
 }

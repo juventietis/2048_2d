@@ -33,7 +33,7 @@ let opengl = OpenGL::V3_2;
 
 	let mut gl = GlGraphics::new(opengl);
 
-	let gameboard = Gameboard::new();
+	let gameboard = Gameboard::new(true);
 	let mut gameboard_controller = GameboardController::new(gameboard);
 	let gameboard_view_settings = GameboardViewSettings::new();
 	let gameboard_view = GameboardView::new(gameboard_view_settings);
