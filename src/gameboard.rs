@@ -17,7 +17,7 @@ pub struct Gameboard {
     pub has_already_won: bool,
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub enum Cell {
     Occupied(usize),
     Empty,
@@ -38,10 +38,12 @@ pub enum GameState {
     Playing,
 }
 
+#[derive(Clone, Copy, Debug)]
 pub struct Position {
     x: usize,
     y: usize,
 }
+
 impl Position{
     pub fn new(x: usize, y: usize) -> Position {
         Position{
@@ -174,126 +176,40 @@ impl Gameboard {
                     Cell::Occupied(n) => {
                         match move_direction {
                             MoveDirection::Up => {
-                                if y != 0{
-                                    let mut next_position: Position = Position::new(x,y);
-                                    let mut new_cell = cell;
-                                    let mut moved = false;
-                                    let mut next_y = y - 1;
-                                    loop{
-                                        match cells[x][next_y] {
-                                            Cell::Empty => {next_position = Position::new(x, next_y); moved = true;}
-                                            Cell::Occupied(m) => {
-                                                if n == m {
-                                                    next_position = Position::new(x, next_y);
-                                                    new_cell = Cell::Occupied(n*2);
-                                                    moved = true;
-                                                }
-                                                break;
-                                            }
-                                        }
-                                        if next_y == 0{
-                                            break;
-                                        }
-                                        next_y -= 1;
-                                    };
-                                    if moved{
-                                        cells[next_position.x][next_position.y] = new_cell;
-                                        cells[x][y] = Cell::Empty;
-                                        executed_move = true;
-                                    }
+                                let mut modifications = Vec::new();
+                                let mut loop_y = y;
+                                while loop_y > 0{
+                                    loop_y -= 1;
+                                    modifications.push(Position::new(x, loop_y));
                                 }
+                                executed_move = self.try_apply_modifications(&mut cells, modifications, n, Position::new(x,y));
                             }
                             MoveDirection::Right => {
-                                if x != 3{
-                                    let mut next_position: Position = Position::new(x,y);
-                                    let mut new_cell = cell;
-                                    let mut moved = false;
-                                    let mut next_x = x + 1;
-                                    loop{
-                                        match cells[next_x][y] {
-                                            Cell::Empty => {next_position = Position::new(next_x, y); moved = true;}
-                                            Cell::Occupied(m) => {
-                                                if n == m {
-                                                    next_position = Position::new(next_x, y);
-                                                    new_cell = Cell::Occupied(n*2);
-                                                    moved = true;
-                                                }
-                                                break;
-                                            }
-                                        }
-                                        if next_x == 3{
-                                            break;
-                                        }
-                                        next_x += 1;
-                                    };
-                                    if moved{
-                                        cells[next_position.x][next_position.y] = new_cell;
-                                        cells[x][y] = Cell::Empty;
-                                        executed_move = true;
-                                    }
-
+                                let mut modifications = Vec::new();
+                                let mut loop_x = x;
+                                while loop_x < 3{
+                                    loop_x += 1;
+                                    modifications.push(Position::new(loop_x, y));
                                 }
+                                executed_move = self.try_apply_modifications(&mut cells, modifications, n, Position::new(x,y));
                             }
                             MoveDirection::Down => {
-                                if y != 3{
-                                    let mut next_position: Position = Position::new(x,y);
-                                    let mut new_cell = cell;
-                                    let mut moved = false;
-                                    let mut next_y = y + 1;
-                                    loop{
-                                        match cells[x][next_y] {
-                                            Cell::Empty => {next_position = Position::new(x, next_y); moved = true;}
-                                            Cell::Occupied(m) => {
-                                                if n == m {
-                                                    next_position = Position::new(x, next_y);
-                                                    new_cell = Cell::Occupied(n*2);
-                                                    moved = true;
-                                                }
-                                                break;
-                                            }
-                                        }
-                                        if next_y == 3{
-                                            break;
-                                        }
-                                        next_y += 1;
-                                    };
-                                    if moved{
-                                        cells[next_position.x][next_position.y] = new_cell;
-                                        cells[x][y] = Cell::Empty;
-                                        executed_move = true;
-                                    }
+                                let mut modifications = Vec::new();
+                                let mut loop_y = y;
+                                while loop_y < 3{
+                                    loop_y += 1;
+                                    modifications.push(Position::new(x, loop_y));
                                 }
+                                executed_move = self.try_apply_modifications(&mut cells, modifications, n, Position::new(x,y));
                             }
                             MoveDirection::Left => {
-                                if x != 0{
-                                    let mut next_position: Position = Position::new(x,y);
-                                    let mut new_cell = cell;
-                                    let mut moved = false;
-                                    let mut next_x = x - 1;
-                                    loop{
-                                        match cells[next_x][y] {
-                                            Cell::Empty => {next_position = Position::new(next_x, y); moved = true;}
-                                            Cell::Occupied(m) => {
-                                                if n == m {
-                                                    next_position = Position::new(next_x, y);
-                                                    new_cell = Cell::Occupied(n*2);
-                                                    moved = true;
-                                                }
-                                                break;
-                                            }
-                                        }
-                                        if next_x == 0{
-                                            break;
-                                        }
-                                        next_x -= 1;
-                                    };
-                                    if moved{
-                                        cells[next_position.x][next_position.y] = new_cell;
-                                        cells[x][y] = Cell::Empty;
-                                        executed_move = true;
-                                    }
-
+                                let mut modifications = Vec::new();
+                                let mut loop_x = x;
+                                while loop_x > 0{
+                                    loop_x -= 1;
+                                    modifications.push(Position::new(loop_x, y));
                                 }
+                                executed_move = self.try_apply_modifications(&mut cells, modifications, n, Position::new(x,y));
                             }
                         }
                     }
@@ -302,6 +218,34 @@ impl Gameboard {
             }
         }
         (executed_move, cells)
+    }
+
+    pub fn try_apply_modifications(&self, cells: &mut Cells, modifications: Vec<Position>, current_cell_n: usize, current_cell_position: Position) -> bool{
+        let mut modification: Option<(Cell, Position)> = Option::None;
+        for Position{x, y} in modifications{
+            match cells[x][y] {
+                Cell::Empty => {
+                    modification = Option::Some((Cell::Occupied(current_cell_n), Position::new(x, y)));
+                }
+                Cell::Occupied(m) => {
+                    if current_cell_n == m {
+                        modification = Option::Some((Cell::Occupied(current_cell_n * 2), Position::new(x, y)));
+                    }
+                    break;
+                }
+            }
+        }
+        println!("{:?}", modification);
+        let executed_move = match modification{
+            Option::Some((new_cell, next_position)) => {
+                cells[next_position.x][next_position.y] = new_cell;
+                cells[current_cell_position.x][current_cell_position.y] = Cell::Empty;
+                true
+        }
+            None => false
+        };
+        println!("{:?}", executed_move);
+        executed_move
     }
 
 	/// Gets the character at cell location.
@@ -407,15 +351,62 @@ mod tests {
     }
 
     #[test]
-    fn moving_to_other_directions_works() {
+    fn moving_left_works() {
         let mut gameboard: Gameboard = Gameboard::new(false);
-        gameboard.cells[0][0] = Cell::Occupied(8);
-        gameboard.cells[3][0] = Cell::Occupied(8);
+        gameboard.cells[3][0] = Cell::Occupied(2);
         gameboard.handle_move(MoveDirection::Left);
         let cell = gameboard.cells[0][0];
         match cell{
             Cell::Occupied(n) => {
-                assert_eq!(n, 16);
+                assert_eq!(n, 2);
+            }
+            _ => {
+                panic!("Cell not found!");
+            }
+        }
+    }
+
+    #[test]
+    fn moving_right_works() {
+        let mut gameboard: Gameboard = Gameboard::new(false);
+        gameboard.cells[0][0] = Cell::Occupied(2);
+        gameboard.handle_move(MoveDirection::Right);
+        let cell = gameboard.cells[3][0];
+        match cell{
+            Cell::Occupied(n) => {
+                assert_eq!(n, 2);
+            }
+            _ => {
+                panic!("Cell not found!");
+            }
+        }
+    }
+
+    #[test]
+    fn moving_down_works() {
+        let mut gameboard: Gameboard = Gameboard::new(false);
+        gameboard.cells[0][0] = Cell::Occupied(2);
+        gameboard.handle_move(MoveDirection::Down);
+        let cell = gameboard.cells[0][3];
+        match cell{
+            Cell::Occupied(n) => {
+                assert_eq!(n, 2);
+            }
+            _ => {
+                panic!("Cell not found!");
+            }
+        }
+    }
+
+    #[test]
+    fn moving_up_works() {
+        let mut gameboard: Gameboard = Gameboard::new(false);
+        gameboard.cells[0][3] = Cell::Occupied(2);
+        gameboard.handle_move(MoveDirection::Up);
+        let cell = gameboard.cells[0][0];
+        match cell{
+            Cell::Occupied(n) => {
+                assert_eq!(n, 2);
             }
             _ => {
                 panic!("Cell not found!");
