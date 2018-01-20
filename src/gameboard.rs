@@ -174,44 +174,38 @@ impl Gameboard {
                 let cell = cells[x][y];
                 match cell {
                     Cell::Occupied(n) => {
+                        let mut modifications = Vec::new();
                         match move_direction {
                             MoveDirection::Up => {
-                                let mut modifications = Vec::new();
                                 let mut loop_y = y;
                                 while loop_y > 0{
                                     loop_y -= 1;
                                     modifications.push(Position::new(x, loop_y));
                                 }
-                                executed_move = self.try_apply_modifications(&mut cells, modifications, n, Position::new(x,y));
                             }
                             MoveDirection::Right => {
-                                let mut modifications = Vec::new();
                                 let mut loop_x = x;
                                 while loop_x < 3{
                                     loop_x += 1;
                                     modifications.push(Position::new(loop_x, y));
                                 }
-                                executed_move = self.try_apply_modifications(&mut cells, modifications, n, Position::new(x,y));
                             }
                             MoveDirection::Down => {
-                                let mut modifications = Vec::new();
                                 let mut loop_y = y;
                                 while loop_y < 3{
                                     loop_y += 1;
                                     modifications.push(Position::new(x, loop_y));
                                 }
-                                executed_move = self.try_apply_modifications(&mut cells, modifications, n, Position::new(x,y));
                             }
                             MoveDirection::Left => {
-                                let mut modifications = Vec::new();
                                 let mut loop_x = x;
                                 while loop_x > 0{
                                     loop_x -= 1;
                                     modifications.push(Position::new(loop_x, y));
                                 }
-                                executed_move = self.try_apply_modifications(&mut cells, modifications, n, Position::new(x,y));
                             }
                         }
+                        executed_move = self.try_apply_modifications(&mut cells, modifications, n, Position::new(x,y));
                     }
                     Cell::Empty => (),
                 }
@@ -235,7 +229,6 @@ impl Gameboard {
                 }
             }
         }
-        println!("{:?}", modification);
         let executed_move = match modification{
             Option::Some((new_cell, next_position)) => {
                 cells[next_position.x][next_position.y] = new_cell;
@@ -244,7 +237,6 @@ impl Gameboard {
         }
             None => false
         };
-        println!("{:?}", executed_move);
         executed_move
     }
 
