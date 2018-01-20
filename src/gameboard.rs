@@ -1,5 +1,7 @@
 
 use rand::{Rng, thread_rng};
+use std::fmt::{self};
+
 
 /// Size of game board.
 pub const SIZE: usize = 4;
@@ -21,6 +23,34 @@ pub struct Gameboard {
 pub enum Cell {
     Occupied(usize),
     Empty,
+}
+
+impl fmt::Display for Cell {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+		match self {
+			&Cell::Occupied(val) => { return write!(f, "{}", val); }
+			&Cell::Empty => write!(f, "{}", 0)
+		}
+    }
+}
+
+impl fmt::Display for Gameboard {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let mut formatted_str = "".to_string();
+        for i in 0..4{
+            let mut row : String = "".to_string();
+            for j in 0..4{
+                let cell = format!("{}", self.cells[j][i]);
+                row = format!("{}{}", row, cell);
+                if j != 3{
+                    row = format!("{}{}", row, "|");
+                }
+            }
+            formatted_str = format!("{}{}{}", formatted_str, "\n", row);
+        }
+        write!(f, "{}", formatted_str)
+    }
+
 }
 
 #[derive(Clone, Copy)]
@@ -65,6 +95,20 @@ impl Gameboard {
             gameboard.set_up_board();
         }
         gameboard
+    }
+
+    pub fn from_str(&mut self, board_str: String) {
+        let t  = board_str.split_whitespace().map(|row: &str| row.split("|"));
+        for (i, col) in t.enumerate(){
+            for (j, row) in col.enumerate(){
+                let cell = if row == "0"{
+                    Cell::Empty 
+                } else {
+                    Cell::Occupied(row.parse().unwrap())
+                };
+                self.cells[j][i] = cell;
+            }
+        }
     }
 
     /// Sets up the initial board.
